@@ -505,21 +505,22 @@
 
 <footer>
   <div style="margin-bottom:5px;">Designed & Developed by <b>공부 길드</b></div>
-  <div style="font-size:0.7rem;">Copyright © 2026 Hwarang Guild. All rights reserved.</div>
+  <div style="font-size:0.7rem;">Copyright © 2026 Study Guild. All rights reserved.</div>
 </footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, onValue, update, push, set, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-// [변경된 DB Config] Sena Hwarang
+// [변경된 DB Config] Sena Study
 const firebaseConfig = {
-  apiKey: "AIzaSyACr8bD-ZrJTwXvyiQTrxacrsQshepRbB8",
-  authDomain: "sena-hwarang.firebaseapp.com",
-  projectId: "sena-hwarang",
-  storageBucket: "sena-hwarang.firebasestorage.app",
-  messagingSenderId: "374306466048",
-  appId: "1:374306466048:web:a97a7bc4c9ea886e0a6be5"
+    apiKey: "AIzaSyD_ajx97ESnCQZ5N7bEK6pOpIXIMUYLnIc",
+    authDomain: "study-guild-e03ed.firebaseapp.com",
+    databaseURL: "https://study-guild-e03ed-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "study-guild-e03ed",
+    storageBucket: "study-guild-e03ed.firebasestorage.app",
+    messagingSenderId: "543799730106",
+    appId: "1:543799730106:web:abe46bd1795c74a026c783"
 };
 
 const app = initializeApp(firebaseConfig);
