@@ -304,13 +304,7 @@
         <button onclick="delAttack()" class="bg-red">삭제</button>
       </div>
     </div>
-    <div>
-      <div style="color:var(--text-sub); margin-bottom:5px;">🔑 입장코드 관리</div>
-      <div style="display:flex; gap:5px; margin-bottom:5px;">
-        <button onclick="issueKey()" style="background:#1e3a5f; color:#fff; flex:1;">새 코드 발급</button>
-      </div>
-      <div id="userKeyList" style="max-height:200px; overflow-y:auto; margin-bottom:15px;"></div>
-    </div>
+
   </div>
 </div>
 
@@ -615,7 +609,6 @@ window.toggleAttackAdmin = () => {
     if(!checkPW()) return; 
     panel.style.display = "block";
     btn.textContent = "- 닫기";
-    renderUserKeys();
     renderAtkSuggestions();
   } else {
     panel.style.display = "none";
@@ -723,12 +716,26 @@ window.selectAttack = (dk, ak) => {
 };
 
 
-window.addDefense = ()=>{ if(checkPW()) push(ref(db,"defenseTeams"),{name:document.getElementById("newDefName").value,attackTeams:{}}); };
-window.delDefense = ()=>{ if(checkPW()) remove(ref(db,"defenseTeams/"+currentDefense)); };
+window.addDefense = ()=>{ 
+  if(!checkPW()) return;
+  const name = document.getElementById("newDefName").value.trim();
+  if(!name) return alert("이름을 입력해주세요.");
+  if(!confirm(`"${name}" 방어팀을 추가할까요?`)) return;
+  push(ref(db,"defenseTeams"),{name:name,attackTeams:{}});
+};
+window.delDefense = ()=>{ 
+  if(!checkPW()) return;
+  if(!currentDefense) return alert("방어팀을 먼저 선택하세요.");
+  if(!confirm("현재 선택된 방어팀을 삭제할까요?\n(하위 공격팀도 모두 삭제됩니다)")) return;
+  remove(ref(db,"defenseTeams/"+currentDefense));
+};
 window.addAttack = ()=>{
   if(!checkPW()) return;
+  const name = document.getElementById("atkName").value.trim();
+  if(!name) return alert("공격팀 이름을 입력해주세요.");
+  if(!confirm(`"${name}" 공격팀을 추가할까요?`)) return;
   push(ref(db,`defenseTeams/${currentDefense}/attackTeams`), {
-    name:document.getElementById("atkName").value, type:document.getElementById("atkType").value,
+    name:name, type:document.getElementById("atkType").value,
     ring:document.getElementById("ringRec").value, pet:document.getElementById("atkPet").value,
     formation:document.getElementById("atkFormation").value, 
     armor:document.getElementById("armorRec").value, skill:document.getElementById("skillOrder").value
@@ -736,6 +743,7 @@ window.addAttack = ()=>{
 };
 window.editAttack = ()=>{
   if(!checkPW() || !currentAttack) return;
+  if(!confirm("현재 공격팀 정보를 수정할까요?")) return;
   update(ref(db,`defenseTeams/${currentDefense}/attackTeams/${currentAttack}`), {
     name:document.getElementById("atkName").value, type:document.getElementById("atkType").value,
     ring:document.getElementById("ringRec").value, pet:document.getElementById("atkPet").value,
@@ -744,7 +752,12 @@ window.editAttack = ()=>{
   });
   alert("수정됨");
 };
-window.delAttack = ()=>{ if(checkPW()) remove(ref(db,`defenseTeams/${currentDefense}/attackTeams/${currentAttack}`)); };
+window.delAttack = ()=>{ 
+  if(!checkPW()) return;
+  if(!currentAttack) return alert("공격팀을 먼저 선택하세요.");
+  if(!confirm("현재 선택된 공격팀을 삭제할까요?")) return;
+  remove(ref(db,`defenseTeams/${currentDefense}/attackTeams/${currentAttack}`));
+};
 
 // 제보 (공격)
 function renderAtkSuggestions() {
@@ -1215,33 +1228,6 @@ function submitDefenseSug() {
   alert("제보 완료"); closeModal();
 }
 
-window.issueKey = async () => {
-  const c = Math.floor(100000+Math.random()*900000);
-  const codeStr = c.toString();
-  await push(ref(db, `allowedCodes`), { code:codeStr, createdAt:Date.now() });
-  alert(`새 입장코드: ${codeStr}`);
-};
-
-function renderUserKeys() {
-  const div = document.getElementById("userKeyList");
-  onValue(ref(db,"allowedCodes"), snap => {
-    div.innerHTML="";
-    const d = snap.val(); if(!d) return;
-    Object.entries(d).forEach(([k,v]) => {
-      const r = document.createElement("div");
-      r.className = "user-stat-row";
-      r.innerHTML = `
-        <div><b style="color:#fff">${v.code}</b> <span style="color:#555; font-size:0.7rem; margin-left:5px;">${new Date(v.createdAt).toLocaleDateString()}</span></div>
-        <button onclick="deleteCode('${k}')" style="background:#700; color:#fff; font-size:0.7rem; padding:3px 6px;">삭제</button>
-      `;
-      div.appendChild(r);
-    });
-  });
-}
-window.deleteCode = async (k) => {
-  if(!confirm("삭제?")) return;
-  await remove(ref(db, `allowedCodes/${k}`));
-};
 </script>
 </body>
 </html>
