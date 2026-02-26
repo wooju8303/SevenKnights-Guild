@@ -1178,6 +1178,7 @@ window.openModal = (type) => {
     document.getElementById("modalTitle").textContent = "공격덱 제보";
     body.innerHTML = `
       <input id="mName" placeholder="공격팀 이름 (필수)">
+      <input id="mAtkMaker" placeholder="작성자 (닉네임)">
       <select id="mType"><option value="속공 따야 함">⚡ 속공 따야 함</option><option value="내줘도 됨">🛡️ 내줘도 됨</option></select>
       <input id="mRing" placeholder="반지">
       <input id="mPet" placeholder="펫">
@@ -1191,6 +1192,7 @@ window.openModal = (type) => {
     // [추가] 스킬 순서 입력창
     body.innerHTML = `
       <input id="mDefName" placeholder="방어팀 이름 (필수)">
+      <input id="mDefMaker" placeholder="작성자 (닉네임)">
       <input id="mHeroes" placeholder="반지 추천">
       <input id="mForm" placeholder="진형">
       <input id="mPet" placeholder="펫">
@@ -1205,12 +1207,13 @@ window.closeModal = () => { document.getElementById("modalOverlay").style.displa
 function submitAttackSug() {
   const name = document.getElementById("mName").value;
   if(!name) return alert("이름 필수");
+  const maker = document.getElementById("mAtkMaker").value.trim() || "익명";
   push(ref(db, `suggestions/attack/${currentDefense}`), {
     name:name, type:document.getElementById("mType").value,
     ring:document.getElementById("mRing").value, pet:document.getElementById("mPet").value,
     formation:document.getElementById("mFormation").value, 
     armor:document.getElementById("mArmor").value, skill:document.getElementById("mSkill").value,
-    suggester:"익명", timestamp:Date.now()
+    suggester:maker, timestamp:Date.now()
   });
   alert("제보 완료"); closeModal();
 }
@@ -1218,12 +1221,13 @@ function submitAttackSug() {
 function submitDefenseSug() {
   const name = document.getElementById("mDefName").value;
   if(!name) return alert("이름 필수");
+  const maker = document.getElementById("mDefMaker").value.trim() || "익명";
   push(ref(db, `suggestions/defense`), {
     name:name, heroes:document.getElementById("mHeroes").value,
     formation:document.getElementById("mForm").value, pet:document.getElementById("mPet").value,
     skill: document.getElementById("mSkillDef").value,
     desc:document.getElementById("mDesc").value,
-    suggester:"익명", timestamp:Date.now()
+    suggester:maker, timestamp:Date.now()
   });
   alert("제보 완료"); closeModal();
 }
